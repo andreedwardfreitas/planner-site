@@ -69,6 +69,7 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
           <div class="price__value"><span>R$</span>99</div>
           <div class="price__desc">Pagamento único<br>Contato da equipe em até 48h úteis</div>
         </div>
+        <p class="price__credit">Se você seguir com o rating em até 30 dias, os R$ 99 são abatidos do valor.</p>
         <div class="hero__actions">
           <a class="btn btn--gold js-checkout" href="https://payfast.greenn.com.br/155834?ch_id=145132" data-cta="hero">Quero meu diagnóstico</a>
           <a class="btn btn--ghost" href="#como-funciona">Ver como funciona</a>
@@ -79,13 +80,31 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
       <figure class="hero__photo">
         <img src="assets/img/andre-retrato.webp" alt="André Freitas, fundador da Planner Consultoria" width="900" height="1350" fetchpriority="high">
         <figcaption class="report-card" aria-hidden="true">
-          <span class="report-card__label">Leitura de crédito · PJ</span>
-          <span class="report-card__row"><b>Score (birôs)</b><i class="ok">Bom</i></span>
-          <span class="report-card__row"><b>SCR / Registrato</b><i class="warn">Atenção</i></span>
-          <span class="report-card__row"><b>Rating interno</b><i class="warn">Revisar</i></span>
+          <span class="report-card__label">Dossiê de crédito · PJ</span>
+          <span class="report-card__row"><b>Birôs e protestos</b><i class="ok">Nada consta</i></span>
+          <span class="report-card__row"><b>SCR / Bacen</b><i class="warn">Prejuízo</i></span>
+          <span class="report-card__row"><b>Classificação</b><i class="warn">C</i></span>
+          <span class="report-card__row"><b>Capacidade mensal</b><i class="warn">R$ 0,00</i></span>
           <span class="report-card__foot">Exemplo ilustrativo</span>
         </figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- DORES -->
+  <section class="section section--deep pains-sec">
+    <div class="wrap">
+      <p class="eyebrow">Você se identifica?</p>
+      <h2>O “não” do banco quase nunca vem com explicação.</h2>
+      <ul class="pains">
+        <li>O banco negou o crédito e não disse o motivo.</li>
+        <li>Ouviu que o seu perfil “não atende à política interna”.</li>
+        <li>Tem renda ou faturamento, mas o limite não sobe.</li>
+        <li>Pediu cartão ou empréstimo e foi recusado na hora.</li>
+        <li>Quitou as dívidas, o nome está limpo e o crédito não voltou.</li>
+        <li>Vai buscar Pronampe ou capital de giro e não sabe como a empresa aparece para o banco.</li>
+      </ul>
+      <p class="pains__close">Se alguma dessas frases é sua, o problema raramente está só no score.</p>
     </div>
   </section>
 
@@ -98,8 +117,8 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
       <ol class="layers">
         <li class="layer">
           <span class="layer__n">1ª camada</span>
-          <h3>Score de crédito</h3>
-          <p>A pontuação dos birôs, como Serasa e Boa Vista. É a parte que todo mundo conhece e a que menos explica uma recusa.</p>
+          <h3>Birôs de crédito</h3>
+          <p>Serasa, SPC, Boa Vista e protestos em cartório: as negativações e o score. É a parte que todo mundo conhece e a que menos explica uma recusa.</p>
         </li>
         <li class="layer">
           <span class="layer__n">2ª camada</span>
@@ -126,8 +145,8 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
           <span class="deliv__icon" aria-hidden="true">
             <svg viewBox="0 0 48 48"><path d="M8 38h32M12 32V22m8 10V16m8 16V20m8 12V10" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
           </span>
-          <h3>Leitura do rating</h3>
-          <p>Como o seu perfil aparece para os bancos e o que pesa em cada critério da análise.</p>
+          <h3>Classificação de risco</h3>
+          <p>A nota estimada do seu perfil, de AAA a C-, com a leitura do que pesa em cada critério da análise.</p>
         </article>
         <article class="deliv">
           <span class="deliv__icon" aria-hidden="true">
@@ -144,6 +163,45 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
           <p>O que resolver primeiro, em que ordem e o impacto esperado de cada ponto no seu acesso a crédito.</p>
         </article>
       </div>
+      <h3 class="scope__title">O que entra na análise</h3>
+      <div class="scope">
+        <div class="scope__col">
+          <h4>Cadastro</h4>
+          <ul>
+            <li>Situação do CPF ou CNPJ na Receita</li>
+            <li>Renda ou faturamento presumido</li>
+            <li>Participações em empresas e o risco cruzado entre CPF e CNPJ</li>
+          </ul>
+        </div>
+        <div class="scope__col">
+          <h4>Birôs e cartórios</h4>
+          <ul>
+            <li>Serasa, SPC e Boa Vista</li>
+            <li>Protestos em cartório</li>
+            <li>Cheques sem fundo</li>
+            <li>Recuperação judicial e falência</li>
+          </ul>
+        </div>
+        <div class="scope__col">
+          <h4>SCR do Banco Central</h4>
+          <ul>
+            <li>Instituições e operações ativas</li>
+            <li>Crédito a vencer, vencido e em prejuízo</li>
+            <li>Operações em discordância ou sub judice</li>
+            <li>Cada operação, uma a uma, por modalidade</li>
+          </ul>
+        </div>
+        <div class="scope__col">
+          <h4>Classificação e capacidade</h4>
+          <ul>
+            <li>Classificação de risco e score</li>
+            <li>Capacidade mensal de pagamento</li>
+            <li>Comprometimento de renda e limite sugerido</li>
+            <li>Pontualidade e procura por crédito em 12 meses</li>
+          </ul>
+        </div>
+      </div>
+      <p class="scope__note">A classificação de risco é calculada a partir do SCR e dos birôs, na lógica que o mercado usa. É uma estimativa técnica, não a nota interna de um banco específico.</p>
     </div>
   </section>
 
@@ -159,15 +217,15 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
         </li>
         <li class="step">
           <span class="step__n">02</span>
-          <div><h3>A equipe entra em contato</h3><p>Em até 48h úteis, com uma lista objetiva do que a análise usa. Nada de pilha de documentos.</p></div>
+          <div><h3>A equipe entra em contato</h3><p>Em até 48h úteis, para confirmar seus dados e registrar a sua autorização de consulta. Nada de pilha de documentos.</p></div>
         </li>
         <li class="step">
           <span class="step__n">03</span>
-          <div><h3>Fazemos a análise</h3><p>Registrato do Banco Central, cadastro, endividamento e relacionamento bancário, cruzados com os critérios que os bancos aplicam.</p></div>
+          <div><h3>Fazemos a análise</h3><p>Birôs, cartórios e SCR do Banco Central, cruzados com os critérios que os bancos aplicam.</p></div>
         </li>
         <li class="step">
           <span class="step__n">04</span>
-          <div><h3>Você recebe o diagnóstico</h3><p>Rating, mapa de riscos e plano de prioridades. Seguir com a Planner depois é escolha sua.</p></div>
+          <div><h3>Você recebe o diagnóstico</h3><p>O dossiê de crédito com a leitura da Planner e o plano de prioridades. Seguir com o rating é escolha sua, e os R$ 99 são abatidos se for em até 30 dias.</p></div>
         </li>
       </ol>
       <div class="center">
@@ -239,8 +297,12 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
           <p>Não. A decisão de crédito é sempre da instituição financeira. O diagnóstico mostra o que o banco enxerga e o que você pode organizar para chegar mais preparado à próxima análise.</p>
         </details>
         <details>
-          <summary>A análise vai consultar meu CPF e baixar meu score?</summary>
-          <p>Não. A base da análise é o Registrato, relatório que você mesmo emite gratuitamente no site do Banco Central. Esse acesso não é uma consulta de crédito e não afeta o score.</p>
+          <summary>Quais bases são consultadas?</summary>
+          <p>Birôs de crédito (Serasa, SPC e Boa Vista), protestos em cartório e o SCR do Banco Central, por meio de plataforma especializada de consulta e com a sua autorização. Os dados são usados apenas para o seu diagnóstico, nos termos da LGPD.</p>
+        </details>
+        <details>
+          <summary>A nota do relatório é a mesma que o meu banco vê?</summary>
+          <p>Não exatamente. Cada banco calcula o próprio rating com dados internos, como movimentação e relacionamento. O diagnóstico usa as mesmas bases que todos os bancos consultam, o SCR e os birôs, para estimar como o seu perfil tende a ser classificado e mostrar o que pesa contra você.</p>
         </details>
         <details>
           <summary>Preciso enviar muitos documentos?</summary>
@@ -258,6 +320,10 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
           <summary>Sou obrigado a contratar algo depois?</summary>
           <p>Não. O diagnóstico é seu. Seguir com a Planner para executar o plano é uma escolha sua.</p>
         </details>
+        <details>
+          <summary>E se eu decidir fazer o rating com a Planner?</summary>
+          <p>Os R$ 99 pagos no diagnóstico são abatidos do valor do rating, desde que a contratação seja feita em até 30 dias após o pagamento do diagnóstico.</p>
+        </details>
       </div>
       <p class="faq__more">Ficou alguma dúvida? <a class="js-wa" href="https://wa.me/5592995238398?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Planner%20e%20quero%20entender%20o%20diagn%C3%B3stico%20de%20cr%C3%A9dito." target="_blank" rel="noopener" data-cta="faq">Converse com a Planner no WhatsApp</a></p>
     </div>
@@ -268,7 +334,7 @@ fbq('init','SEU_PIXEL_ID');fbq('track','PageView');
     <div class="wrap final__inner">
       <img class="final__logo" src="assets/img/logo-principal.png" alt="" width="360" height="281" loading="lazy">
       <h2>Descubra sua nota <em>antes do banco.</em></h2>
-      <p>Diagnóstico de crédito por R$ 99. A equipe da Planner entra em contato em até 48h úteis após a confirmação do pagamento.</p>
+      <p>Diagnóstico de crédito por R$ 99, abatidos do rating se você seguir em até 30 dias. A equipe da Planner entra em contato em até 48h úteis após a confirmação do pagamento.</p>
       <div class="final__actions">
         <a class="btn btn--gold js-checkout" href="https://payfast.greenn.com.br/155834?ch_id=145132" data-cta="final">Quero meu diagnóstico</a>
         <a class="btn btn--ghost js-wa" href="https://wa.me/5592995238398?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Planner%20e%20quero%20entender%20o%20diagn%C3%B3stico%20de%20cr%C3%A9dito." target="_blank" rel="noopener" data-cta="final">Falar no WhatsApp</a>

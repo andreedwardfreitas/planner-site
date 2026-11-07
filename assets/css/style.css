@@ -198,3 +198,28 @@ p{margin:0}
   .mobile-cta .btn{width:100%}
 }
 @media (prefers-reduced-motion:reduce){.btn,.mobile-cta{transition:none}}
+
+/* Preço: abatimento no rating */
+.price__credit{margin-top:14px;font-size:.85rem;color:var(--gold-light);max-width:460px}
+
+/* Dores */
+.pains{list-style:none;margin:40px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 28px}
+.pains li{position:relative;padding:18px 20px 18px 50px;border:1px solid var(--line-dark);border-radius:var(--radius);color:#e4e5ee;background:rgba(255,255,255,.02)}
+.pains li::before{content:"";position:absolute;left:20px;top:22px;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold)}
+.pains__close{margin-top:30px;font-family:var(--display);font-size:1.35rem;color:var(--gold-light)}
+
+/* Escopo da análise */
+.scope__title{margin-top:64px;font-family:var(--display);font-size:1.6rem;color:#fff}
+.scope{margin-top:24px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.scope__col{border-top:2px solid var(--gold);padding-top:16px}
+.scope__col h4{margin:0 0 10px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.scope__col ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:7px}
+.scope__col li{color:var(--text-soft);font-size:.92rem}
+.scope__note{margin-top:26px;font-size:.82rem;color:var(--text-soft);max-width:70ch}
+
+@media (max-width:960px){
+  .scope{grid-template-columns:1fr 1fr;gap:26px}
+}
+@media (max-width:600px){
+  .pains,.scope{grid-template-columns:1fr}
+}
