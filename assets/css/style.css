@@ -53,6 +53,12 @@ p{margin:0}
 .btn--ghost:hover{border-color:var(--gold);color:#E8CF8B}
 .btn--sm{min-height:42px;padding:0 20px;font-size:.85rem}
 
+.wa-line{font-size:.88rem;color:var(--text-soft)}
+.wa-line a{color:var(--gold-light);font-weight:600;text-underline-offset:4px}
+.faq__more{margin-top:28px;color:var(--ink-soft)}
+.faq__more a{color:#7a5f28;font-weight:600;text-underline-offset:4px}
+.final__actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+
 /* Topo */
 .topbar{position:sticky;top:0;z-index:20;background:rgba(22,25,45,.92);backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--line-dark)}
 .topbar__inner{display:flex;align-items:center;gap:24px;min-height:72px}

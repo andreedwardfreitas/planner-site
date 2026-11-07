@@ -19,6 +19,12 @@
     });
   });
 
+  document.querySelectorAll(".js-wa").forEach(function (a) {
+    a.addEventListener("click", function () {
+      if (typeof window.fbq === "function") window.fbq("track", "Contact", { content_name: "WhatsApp " + (a.dataset.cta || "") });
+    });
+  });
+
   // Barra de compra no celular: aparece depois que o topo sai da tela
   var bar = document.querySelector(".mobile-cta");
   var hero = document.querySelector(".hero");
