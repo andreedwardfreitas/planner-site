@@ -1,0 +1,141 @@
+{%- set c = d.cliente -%}{%- set cl = d.classificacao -%}{%- set s = d.scr -%}{%- set cm = d.comportamento -%}
+{%- set PF = d.tipo == 'PF' -%}{%- set DOC = 'CPF' if PF else 'CNPJ' -%}
+{%- macro card(letra, titulo, extra='') -%}<div class="rc"><div class="rc-t"><i>{{ letra }}</i><h3>{{ titulo }}</h3>{% if extra %}<em>{{ extra }}</em>{% endif %}</div>{{ caller() }}</div>{%- endmacro -%}
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Rating Bancário · {{ c.nome_exibicao }}</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="flow.css"></head><body>
+
+<div class="rh">
+  <div>
+    <div class="ey">Diagnóstico de crédito · Planner Consultoria</div>
+    <h1>Rating {{ d.tipo }}</h1>
+    <p><b>{{ 'Cliente' if PF else 'Empresa' }}:</b> {{ c.nome }}</p>
+    <p><b>{{ DOC }}:</b> {{ c.documento }}</p>
+    {% if c.nome_mae %}<p><b>Nome da mãe:</b> {{ c.nome_mae }}</p>{% endif %}
+    <p><b>{{ 'Data de nascimento' if PF else 'Fundação' }}:</b> {{ c.data_referencia }}</p>
+    <p><b>Situação do {{ DOC }}:</b> {{ c.situacao_receita | upper }}</p>
+  </div>
+  <div class="when"><span>Relatório gerado em</span><b>{{ d.consulta.data }}</b><p class="small" style="margin-top:2mm">Protocolo {{ d.consulta.protocolo }}</p></div>
+  <div class="src"><b>Fontes:</b> birôs de crédito (consulta completa) + SCR do Banco Central</div>
+</div>
+
+{% call card('A', 'Classificação Score Rating (' ~ d.tipo ~ ')') %}
+<div class="cls">
+  <div class="sq">{{ cl.classe }}</div>
+  <div>
+    <p>Comprometimento de renda <b>{{ d.capacidade.comprometimento }}</b>. Nota {{ cl.classe }}: <b class="st-{{ cl.nivel }}">{{ {'ok':'menor risco relativo','warn':'risco moderado','risk':'maior risco relativo'}[cl.nivel] }}</b>.</p>
+    {% if cl.limitadores %}<div class="limits"><h5>O que limitou esta nota</h5><ul>{% for l in cl.limitadores %}<li>{{ l }}</li>{% endfor %}</ul></div>{% endif %}
+    <p class="note">Nota calculada pela plataforma de consulta a partir do SCR do Banco Central, dos registros de birôs e do histórico de pagamento. Não substitui a decisão do concedente.</p>
+    <div class="pills">{% for e in ESCALA %}<span class="{{ 'on' if loop.index0 == cl.idx }}">{{ e }}</span>{% endfor %}</div>
+  </div>
+</div>
+{% endcall %}
+
+{% call card('B', 'Resumo executivo') %}
+<div class="tiles">
+  <div class="tile"><small>Comprometimento de renda</small><b>{{ d.capacidade.comprometimento }}</b></div>
+  <div class="tile"><small>{{ 'Renda presumida' if PF else 'Faturamento presumido' }}</small><b>{{ c.renda_presumida | brl }}</b></div>
+  <div class="tile"><small>Situação do {{ DOC }}</small><b>{{ c.situacao_receita | upper }}</b></div>
+</div>
+<div class="tiles t2" style="margin-top:3mm">
+  <div class="tile"><small>Capacidade mensal de pagamento</small><b>{{ d.capacidade.capacidade_mensal | brl }}</b></div>
+  <div class="tile"><small>{{ d.capacidade.limite_rotulo }}</small><b>{{ d.capacidade.limite_sugerido | brl }}</b></div>
+  <div class="tile"><small>Endividamento financeiro</small><b class="{{ 'st-risk' if cm.endividamento in ['Crítico','Alto'] }}">{{ cm.endividamento }}</b>{% if cl.endividamento_obs %}<span>{{ cl.endividamento_obs }}</span>{% endif %}</div>
+  <div class="tile"><small>Classificação financeira</small><b class="{{ 'st-risk' if cm.saude_financeira in ['Crítica','Ruim'] }}">{{ cm.saude_financeira }}</b>{% if cl.saude_obs %}<span>{{ cl.saude_obs }}</span>{% endif %}</div>
+</div>
+<div class="decision"><div><small>Síntese de decisão (tendência)</small><b>{{ cl.sintese_decisao or cl.sintese }}</b></div>{% if cl.sintese_decisao_obs %}<span>{{ cl.sintese_decisao_obs }}</span>{% endif %}</div>
+{% endcall %}
+
+{% call card('B.1', 'Leitura técnica') %}<p>{{ cl.parecer }}</p>{% endcall %}
+
+{% if d.contatos %}
+{% call card('C.1', 'Telefone, e-mail e endereço') %}
+<div class="tiles">
+  <div class="tile"><small>Telefones · {{ d.contatos.telefones | length }}</small>{% for t in d.contatos.telefones %}<span>{{ loop.index }}. {{ t }}</span>{% endfor %}</div>
+  <div class="tile"><small>E-mails · {{ d.contatos.emails | length }}</small>{% for t in d.contatos.emails %}<span>{{ loop.index }}. {{ t }}</span>{% endfor %}</div>
+  <div class="tile"><small>Endereços · {{ d.contatos.enderecos | length }}</small>{% for t in d.contatos.enderecos %}<span>{{ loop.index }}. {{ t }}</span>{% endfor %}</div>
+</div>
+{% endcall %}
+{% endif %}
+
+{% call card('C.2', 'Participações societárias') %}
+<div class="tiles t2">{% for p in d.participacoes %}<div class="tile"><small>Empresa · {{ p.participacao }}</small><b style="font-size:9pt">{{ p.razao }}</b><span>CNPJ {{ p.cnpj }}</span></div>{% else %}<p>Nenhuma participação encontrada.</p>{% endfor %}</div>
+{% endcall %}
+
+{% call card('D', 'Ocorrências e restrições', 'Total geral ' ~ (d.restricoes_valor | brl)) %}
+<div class="bgrid">{% for b in d.biros if b.qtd is not none %}<div><small>{{ b.fonte }}</small><b class="{{ 'st-risk' if b.qtd }}">{{ b.valor | brl }}</b><span class="{{ 'st-risk' if b.qtd }}">{{ b.status }}</span></div>{% endfor %}</div>
+<table><thead><tr><th>Item</th><th>Status</th><th class="r">Detalhamento</th></tr></thead><tbody>
+{% for b in d.biros %}<tr><td>{{ b.fonte }}</td><td><span class="st-pill {{ 'info' if b.qtd is none }}" style="{{ 'background:var(--risk-bg);color:var(--risk)' if b.qtd }}">{{ b.status }}</span></td><td class="r small">{{ 'Nenhum registro identificado' if b.qtd == 0 else ('Verificar' if b.qtd is none else b.qtd ~ ' registro(s)') }}</td></tr>{% endfor %}
+{% if d.contatos %}<tr><td>E-mails cadastrados</td><td><span class="st-pill info">{{ d.contatos.emails | length }} registro(s)</span></td><td class="r small">Informação cadastral</td></tr>
+<tr><td>Telefones cadastrados</td><td><span class="st-pill info">{{ d.contatos.telefones | length }} registro(s)</span></td><td class="r small">Informação cadastral</td></tr>
+<tr><td>Endereços cadastrados</td><td><span class="st-pill info">{{ d.contatos.enderecos | length }} registro(s)</span></td><td class="r small">Informação cadastral</td></tr>{% endif %}
+<tr><td>Histórico de consultas</td><td><span class="st-pill info">{{ d.consultas.total }} registro(s)</span></td><td class="r small">Informação cadastral</td></tr>
+</tbody></table>
+{% endcall %}
+
+{% call card('E.1', 'Histórico anual de consultas') %}
+<div class="tiles">
+  <div class="tile"><small>Total de consultas</small><b>{{ d.consultas.total }}</b></div>
+  <div class="tile"><small>Ocorrência mais recente</small><b>{{ d.consultas.mais_recente or '—' }}</b></div>
+  <div class="tile"><small>Primeira consulta</small><b>{{ d.consultas.primeira or '—' }}</b></div>
+</div>
+<div class="cal" style="margin-top:3mm">{% for m in ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'] %}{% set v = d.consultas.por_mes[loop.index0] %}<div>{{ m }}<span class="{{ 'c3' if v >= 3 else ('c' ~ v if v else '') }}">{{ v }}</span></div>{% endfor %}</div>
+{% if d.consultas.detalhe %}<table style="margin-top:3mm"><thead><tr><th>Data</th><th>CNPJ</th><th>Razão social / segmento</th></tr></thead><tbody>{% for x in d.consultas.detalhe %}<tr><td>{{ x.data }}</td><td class="small">{{ x.cnpj or 'Não informado' }}</td><td>{{ x.segmento | upper }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% endcall %}
+
+{% call card('F', 'SCR Bacen: carteira de crédito', 'Desde ' ~ s.inicio_relacionamento) %}
+<div class="cards2" style="margin-top:0">
+  <div><p class="eyebrow">Relacionamento</p><table><tbody>
+    <tr><td>Quantidade de instituições</td><td class="r"><b>{{ s.instituicoes }}</b></td></tr>
+    <tr><td>Quantidade de operações</td><td class="r"><b>{{ s.operacoes }}</b></td></tr>
+    <tr><td>Operações com discordância</td><td class="r">{{ 'Nada consta' if not s.discordancia else s.discordancia }}</td></tr>
+    <tr><td>Operações sub judice</td><td class="r">{{ 'Nada consta' if not s.sub_judice else s.sub_judice }}</td></tr>
+    {% if cl.score_scr %}<tr><td>Score SCR</td><td class="r">{{ cl.score_scr }}</td></tr>{% endif %}
+  </tbody></table></div>
+  <div><p class="eyebrow">Saldos</p><table><tbody>
+    <tr><td>Valor a pagar (A)</td><td class="r"><b>{{ s.a_vencer | brl }}</b></td></tr>
+    <tr><td>Dívidas não pagas (B)</td><td class="r st-risk"><b>{{ s.vencido | brl }}</b></td></tr>
+    <tr><td>Prejuízo ao sistema financeiro (C)</td><td class="r {{ 'st-risk' if s.prejuizo }}">{{ s.prejuizo | brl }}</td></tr>
+    <tr><td>Limite de crédito</td><td class="r">{{ s.limite | brl }}</td></tr>
+  </tbody></table></div>
+</div>
+<div class="stack"><div class="av" style="width:{{ s.pct_av }}%"></div><div class="vd" style="width:{{ s.pct_vd }}%"></div><div class="pj" style="width:{{ s.pct_pj }}%"></div></div>
+<div class="legend"><span><i style="background:var(--navy)"></i>A vencer {{ '%.0f' % s.pct_av }}%</span><span><i style="background:var(--risk)"></i>Vencido {{ '%.0f' % s.pct_vd }}%</span><span><i style="background:#5B1F14"></i>Prejuízo {{ '%.0f' % s.pct_pj }}%</span><span style="margin-left:auto">Carteira total {{ s.total | brl }}</span></div>
+{% endcall %}
+
+{%- set ops = d.operacoes_detalhe -%}
+<div class="rc" style="break-inside:auto"><div class="rc-t"><i>F.2</i><h3>SCR Bacen: detalhamento completo</h3></div>
+<div class="tiles" style="grid-template-columns:repeat(4,1fr)">
+  <div class="tile"><small>Total carteira</small><b>{{ s.total | brl }}</b></div>
+  <div class="tile"><small>A vencer</small><b>{{ s.a_vencer | brl }}</b></div>
+  <div class="tile"><small>Vencido</small><b class="st-risk">{{ s.vencido | brl }}</b></div>
+  <div class="tile"><small>Modalidades</small><b>{{ ops | rejectattr('eh_limite') | list | length }}</b></div>
+</div>
+<p class="small" style="margin-top:2mm">Limite disponível: {{ s.limite | brl }}. Não é dívida e fica fora do total da carteira.</p>
+{% for o in ops %}
+{%- if o.eh_limite -%}{%- set tg, tl = 'lm', 'Limite' -%}{%- elif o.vencido and o.a_vencer -%}{%- set tg, tl = 'pv', 'Parte vencida' -%}{%- elif o.vencido -%}{%- set tg, tl = 'vd', 'Vencido' -%}{%- else -%}{%- set tg, tl = 'av', 'A vencer' -%}{%- endif -%}
+<div class="op">
+  <div class="op-h"><div><div class="n">Operação {{ o.n }}</div><h4>{{ o.grupo }}</h4><span class="tag {{ tg }}">{{ tl }}</span> <span class="sub">{{ o.faixas | length }} vencimento(s) · {{ o.modalidade }}</span></div><div class="v">{{ o.total | brl }}</div></div>
+  <table><thead><tr><th>Descrição</th><th class="r">Valor</th><th>Cód.</th><th>Restritivo</th></tr></thead><tbody>{% for f in o.faixas %}<tr class="{{ 'vd' if f.tipo in ['vencido','prejuizo'] }}"><td>{{ {'a_vencer':'Créditos a vencer','vencido':'Créditos vencidos','prejuizo':'Créditos baixados como prejuízo','limite':'Limite de crédito'}[f.tipo] }} {{ f.faixa }}</td><td class="r">{{ f.valor | brl }}</td><td>{{ f.codigo }}</td><td>{{ 'Sim' if f.tipo in ['vencido','prejuizo'] else 'Não' }}</td></tr>{% endfor %}</tbody></table>
+  <div class="foot"><span>Modalidade ({{ o.cod_modalidade }}) <b>{{ o.grupo }}</b></span><span>Submodalidade ({{ o.cod_submodalidade }}) <b>{{ o.modalidade }}</b></span>{% if o.participacao %}<span>Participação na carteira <b>{{ o.participacao }}</b></span>{% endif %}</div>
+</div>
+{% endfor %}
+</div>
+
+{% call card('G', 'Síntese final: resumo geral da consulta') %}
+<div class="flowx">{% for p in d.pilares[:3] %}<div class="{{ p.lv if p.lv != 'warn' else 'risk' }}">{{ p.t }}</div><i>→</i>{% endfor %}<div class="fin">{{ cl.veredito or cl.sintese }}</div></div>
+<div class="tiles" style="grid-template-columns:repeat(4,1fr)">
+  <div class="tile"><small>Birôs</small><b>{{ d.restricoes_valor | brl }}</b><span>{{ d.restricoes_qtd }} registro(s)</span></div>
+  <div class="tile"><small>Bacen · prejuízo</small><b>{{ s.prejuizo | brl }}</b></div>
+  <div class="tile"><small>Rating</small><b>{{ cl.classe }}</b></div>
+  <div class="tile" style="background:var(--navy)"><small style="color:var(--gold-light)">Total consolidado</small><b style="color:#fff">{{ (d.restricoes_valor + (s.prejuizo or 0)) | brl }}</b></div>
+</div>
+<p class="small" style="margin-top:2mm">Total consolidado = birôs + prejuízo no SCR no momento da consulta.</p>
+{% endcall %}
+
+{% call card('', 'Informações importantes') %}
+<div class="legal-txt">
+  <p>A decisão de aprovar ou não o crédito é de responsabilidade exclusiva do concedente. As informações deste relatório subsidiam essa decisão e não devem ser usadas como única justificativa para ela.</p>
+  <p>Dados obtidos em {{ d.consulta.data }} (protocolo {{ d.consulta.protocolo }}) por plataforma especializada de consulta, a partir de birôs de crédito e do SCR do Banco Central, com autorização do titular. São confidenciais, de uso exclusivo do titular, e tratados nos termos da Lei 13.709/2018 (LGPD).</p>
+  <p>A Planner Consultoria e Corretora de Seguros Ltda (CNPJ 26.036.076/0001-60) organiza e explica estas informações. Não é instituição financeira, não concede nem intermedeia crédito, e nenhuma análise garante aprovação.</p>
+</div>
+{% endcall %}
+</body></html>

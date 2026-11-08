@@ -1,0 +1,172 @@
+{%- set c = d.cliente -%}{%- set cl = d.classificacao -%}{%- set s = d.scr -%}{%- set cm = d.comportamento -%}
+{%- set PF = d.tipo == 'PF' -%}{%- set DOC = 'CPF' if PF else 'CNPJ' -%}
+{%- macro sh(n, t, brk=False) -%}<div class="sh{{ ' sec-break' if brk }}"><span class="no">{{ n }}</span><h2>{{ t }}</h2></div>{%- endmacro -%}
+{%- macro box(t) -%}<div class="box"><h5>{{ t }}</h5>{{ caller() }}</div>{%- endmacro -%}
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Dossiê de Crédito · {{ c.nome_exibicao }}</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="flow.css"></head><body>
+
+<section class="cv">
+  <div class="band">
+    <img src="assets/logo-horizontal.png" alt="Planner Consultoria">
+    <p class="eyebrow">Planner Consultoria · Inteligência de crédito</p>
+    <h1>Dossiê de Crédito</h1>
+    <div class="rule"></div>
+    <div class="name">{{ c.nome_exibicao }}</div>
+    <div class="meta">{{ 'Pessoa física' if PF else 'Pessoa jurídica' }} · {{ c.documento }}</div>
+  </div>
+  <div class="seal"><small>Rating</small><strong>{{ cl.classe }}</strong><span>Score {{ cl.score }}</span></div>
+  <div class="status"><span class="verdict v-{{ cl.nivel }}">{{ cl.sintese }}</span></div>
+  <div class="toc"><h4>Neste dossiê</h4><ol>{% if d.leitura %}<li><b>A</b>Leitura da Planner</li><li><b>B</b>Plano de prioridades</li>{% endif %}
+    {% for t in ['Como ler este dossiê','Identificação do titular','Conclusão da análise','Escala de classificação, explicada','Comportamento de crédito','Apontamentos restritivos','Endividamento bancário (SCR/Bacen)','Operações de crédito, uma a uma','Contatos e endereços','Participações societárias','Histórico de consultas ao crédito','Glossário','Informações legais e LGPD'] %}<li><b>{{ '%02d' % loop.index }}</b>{{ t }}</li>{% endfor %}
+  </ol></div>
+  <div class="proto"><span>Protocolo <b>{{ d.consulta.protocolo }}</b></span><span>Emitido em <b>{{ d.consulta.data }}</b></span><span>Fontes <b>Birôs de crédito · SCR/Bacen</b></span></div>
+</section>
+{% if not so_capa %}
+{% if d.leitura %}
+{{ sh('A', 'Leitura da Planner') }}
+<p class="lead">{{ d.leitura.sintese }}</p>
+<div class="cols" style="margin-top:5mm">
+  <div><p class="col-title st-risk">O que pesa contra</p>{% for p in d.leitura.contra %}<div class="point"><h3>{{ p.titulo }}</h3><p>{{ p.texto }}</p></div>{% endfor %}</div>
+  <div><p class="col-title st-ok">O que joga a favor</p>{% for p in d.leitura.favor %}<div class="point fav"><h3>{{ p.titulo }}</h3><p>{{ p.texto }}</p></div>{% endfor %}</div>
+</div>
+<div class="sec-break"></div>
+{{ sh('B', 'Plano de prioridades') }}
+<ol class="plan">{% for p in d.leitura.plano %}<li><span class="num">{{ '%02d' % loop.index }}</span><div><h3>{{ p.acao }}</h3><p>{{ p.detalhe }}</p></div><span class="when">{{ p.prazo }}</span></li>{% endfor %}</ol>
+{%- set wa = 'https://wa.me/' ~ d.planner.whatsapp_link ~ '?text=Ol%C3%A1!%20Recebi%20meu%20dossi%C3%AA%20de%20cr%C3%A9dito%20da%20Planner.' -%}
+<div class="next"><div><p class="eyebrow">Próximo passo</p><p>{{ d.leitura.proximo_passo }}</p></div><a class="contact" href="{{ wa }}">Fale com a Planner<b>{{ d.planner.whatsapp }}</b>WhatsApp</a></div>
+<p class="small" style="margin-top:4mm">O plano organiza prioridades a partir dos dados da consulta e não garante aprovação de crédito: cada instituição aplica a própria política.</p>
+<div class="sec-break"></div>
+{% endif %}
+{{ sh('01', 'Como ler este dossiê') }}
+{% call box('O que este documento é') %}<p>Este dossiê reúne, numa única leitura, o que duas fontes independentes registram sobre a capacidade de pagamento do titular na data da consulta. Ele <b>subsidia</b> a decisão de crédito, mas não a substitui: a decisão final é sempre de quem concede.</p>{% endcall %}
+{% call box('De onde vem cada bloco, e o que cada fonte não cobre') %}<p><b>Birôs de crédito (Serasa, SPC, Boa Vista):</b> registram apontamentos que os credores comunicaram, como dívidas negativadas e cheques sem fundo. Não enxergam dívida em dia nem acordo feito fora do sistema de negativação.</p><p><b>SCR do Banco Central:</b> o endividamento bancário informado todo mês pelas instituições financeiras. Mostra o que se deve a bancos, <b>inclusive em dia</b>. Não inclui dívidas fora do sistema financeiro, como contas de consumo e crediário.</p>{% endcall %}
+{% call box('O que é estimativa e o que é registro') %}<p>Renda presumida, capacidade de pagamento e score são <b>modelos estatísticos</b>: descrevem o comportamento esperado de um perfil, não a situação declarada desta pessoa. Apontamentos, protestos e operações do SCR são <b>registros factuais</b>, informados por terceiros. Trate os primeiros como orientação e os segundos como fato.</p><p>O <b>limite sugerido</b> não é nenhum dos dois: é uma régua aplicada sobre a renda estimada, explicada na conclusão.</p>{% endcall %}
+
+{{ sh('02', 'Identificação do titular') }}
+<div class="kv">
+  <div><small>Nome</small><b>{{ c.nome }}</b></div>
+  <div><small>{{ DOC }}</small><b>{{ c.documento }}</b></div>
+  <div><small>Situação na Receita</small><b>{{ c.situacao_receita | upper }}</b></div>
+  <div><small>{{ 'Data de nascimento' if PF else 'Fundação' }}</small><b>{{ c.data_referencia }}</b></div>
+  {% if c.nome_mae %}<div><small>Nome da mãe</small><b>{{ c.nome_mae }}</b></div>{% endif %}
+  <div><small>{{ 'Renda presumida' if PF else 'Faturamento presumido' }}</small><b>{{ c.renda_presumida | brl }}</b></div>
+  {% if c.classe_social %}<div><small>Classe social estimada</small><b>{{ c.classe_social }}</b></div>{% endif %}
+  {% if c.perfil_premium %}<div><small>Perfil premium</small><b>{{ c.perfil_premium | upper }}</b></div>{% endif %}
+</div>
+{% call box('Por que a identificação importa') %}<p>Confira nome, documento e data de nascimento antes de usar o restante do dossiê. Toda a análise se apoia neste vínculo: dado divergente aqui compromete tudo o que vem depois. A situação na Receita precisa estar <b>regular</b>; documento suspenso ou cancelado inviabiliza a contratação, independentemente do rating.</p>{% endcall %}
+
+<div class="sec-keep">{{ sh('03', 'Conclusão da análise' ) }}
+<div class="parecer-band"><span>Parecer técnico</span><b>{{ cl.sintese }}</b></div>
+<div class="parecer-body">
+  <p>{{ cl.parecer }}</p>
+  {% if cl.limitadores %}<div class="limits"><h5>O que limitou esta nota</h5><ul>{% for l in cl.limitadores %}<li>{{ l }}</li>{% endfor %}</ul></div>{% endif %}
+  <p class="note">Nota calculada pela plataforma de consulta a partir do SCR do Banco Central, dos registros de birôs e do histórico de pagamento. Não substitui a decisão do concedente do crédito.</p>
+</div></div>
+<div class="cards2">
+  <div class="cardx"><div class="t"><small>{{ d.capacidade.limite_rotulo }}</small><b>{{ d.capacidade.limite_sugerido | brl }}</b></div><p><strong>É soma de exposição</strong>, não o valor de uma operação isolada, e não desconta o crédito que o titular já tem contratado em outras instituições. Some o que aparece no bloco do SCR antes de definir o seu.</p></div>
+  <div class="cardx"><div class="t"><small>Capacidade mensal de pagamento</small><b>{{ d.capacidade.capacidade_mensal | brl }}</b></div><p>Quanto sobra por mês depois dos compromissos estimados. <strong>É o número que dimensiona a parcela:</strong> uma prestação acima disso tende a virar atraso, mesmo com rating bom.</p></div>
+  <div class="cardx"><div class="t"><small>Comprometimento de renda</small><b>{{ d.capacidade.comprometimento }}</b></div><p>Percentual da renda estimada já tomado por obrigações. Abaixo de 30% costuma indicar folga; acima de 50%, pouca margem para nova dívida. <strong>Leia junto com a renda.</strong></p></div>
+  <div class="cardx"><div class="t"><small>Score</small><b>{{ cl.score }}</b></div><p>Pontuação estatística de probabilidade de inadimplência, comparando este perfil com milhares de outros semelhantes. <strong>Score alto com dívida vencida no SCR continua sendo risco concreto.</strong></p></div>
+</div>
+
+<div class="sec-keep">{{ sh('04', 'Escala de classificação, explicada') }}
+<div class="pills" style="margin-bottom:3mm">{% for e in ESCALA %}<span class="{{ 'on' if loop.index0 == cl.idx }}">{{ e }}</span>{% endfor %}</div>
+<table class="esc"><thead><tr><th>Classe</th><th>Risco</th><th>Como se lê na prática</th></tr></thead><tbody>
+{% for e, r, t in [('AAA','Mínimo','Histórico sem restrições e capacidade de pagamento folgada. Concessão direta.'),('AA','Muito baixo','Perfil sólido. Concessão direta, com limite dentro do sugerido.'),('A','Baixo','Bom histórico. Concessão usual; acompanhar prazo e valor da parcela.'),('BBB','Moderado','Aceitável com atenção. Vale conferir o comprometimento de renda antes do valor final.'),('BB','Moderado a elevado','Pede mitigação: entrada maior, prazo menor ou garantia.'),('B','Elevado','Concessão com garantia real ou avalista, e limite abaixo do sugerido.'),('C','Alto','Operação desaconselhada sem garantia forte.'),('C-','Muito alto','Operação não recomendada.')] %}<tr class="{{ 'on' if e == cl.classe }}"><td><span class="dot" style="background:{{ CORES[e] }}"></span>{{ e }}</td><td>{{ r }}</td><td>{{ t }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% call box('Como a classe é apurada') %}<p>A classificação consolida critérios bancários de mercado: histórico de pagamento, comprometimento de renda, apontamentos e endividamento registrado. Ela não substitui a política de crédito de quem concede: a mesma classe pode ser aceitável para uma operação com garantia e recusada para crédito sem garantia. O que puxou a classe desta consulta está em “O que limitou esta nota”, na conclusão.</p>{% endcall %}
+
+<div class="sec-keep">{{ sh('05', 'Comportamento de crédito' ) }}
+<div class="kv k4">
+  <div><small>Risco geral</small><b>{{ cm.risco_geral }}</b></div>
+  <div><small>Busca por crédito · 12m</small><b>{{ cm.busca_credito_12m }}</b></div>
+  <div><small>Endividamento</small><b class="{{ 'risk' if cm.endividamento in ['Crítico','Alto'] }}">{{ cm.endividamento }}</b></div>
+  <div><small>Saúde financeira</small><b class="{{ 'risk' if cm.saude_financeira in ['Crítica','Ruim'] }}">{{ cm.saude_financeira }}</b></div>
+  {% if cm.indice_risco %}<div><small>Índice de risco</small><b>{{ cm.indice_risco }}</b></div>{% endif %}
+  {% if cm.indice_financeiro %}<div><small>Índice financeiro</small><b>{{ cm.indice_financeiro }}</b></div>{% endif %}
+  <div><small>Pontualidade de pagamento</small><b>{{ cm.pontualidade }}</b></div>
+  {% if cm.recuperacao_judicial %}<div><small>Recuperação judicial / falência</small><b>{{ cm.recuperacao_judicial }}</b></div>{% endif %}
+</div></div>
+<div class="cards2">
+  <div class="cardx"><div class="t"><small>Busca por crédito nos últimos 12 meses</small><b>{{ cm.busca_credito_12m }}</b></div><p>Mede o quanto o titular <strong>procurou</strong> crédito no período, não o quanto contratou. Procura intensa em pouco tempo costuma anteceder aperto de caixa. É o único indicador que mostra movimento recente; os outros são retrato.</p></div>
+  <div class="cardx"><div class="t"><small>Endividamento</small><b>{{ cm.endividamento }}</b></div><p>A dívida registrada no SCR (a vencer, vencida e em prejuízo) diante da renda mensal estimada. Atraso pesa sozinho. {% if cl.endividamento_obs %}<strong>Nesta consulta: {{ cl.endividamento_obs }}</strong>{% endif %}</p></div>
+  <div class="cardx"><div class="t"><small>Pontualidade de pagamento</small><b>{{ cm.pontualidade }}</b></div><p>Índice de aderência aos vencimentos no histórico conhecido. É o indicador mais próximo de <strong>comportamento observado</strong> e vale mais que estimativa quando os dois divergem.</p></div>
+  <div class="cardx"><div class="t"><small>Saúde financeira</small><b>{{ cm.saude_financeira }}</b></div><p>Leitura consolidada da capacidade de administrar obrigações. Serve para enquadrar o perfil, não para definir valor: o valor sai da capacidade mensal.</p></div>
+</div>
+<div class="sec sec-keep" style="margin-top:5mm"><p class="eyebrow">Consultas ao crédito, mês a mês · {{ d.consultas.ano }}</p>
+<div class="cal">{% for m in ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'] %}{% set v = d.consultas.por_mes[loop.index0] %}<div>{{ m }}<span class="{{ 'c3' if v >= 3 else ('c' ~ v if v else '') }}">{{ v if v else '·' }}</span></div>{% endfor %}</div></div>
+{% call box('Como usar o calendário') %}<p>Cada célula é o número de vezes que o crédito do titular foi consultado naquele mês. Meses seguidos com marcação indicam procura ativa. Um pico isolado costuma ser uma compra específica, como carro, imóvel ou financiamento. O padrão importa mais que o total.</p>{% endcall %}
+
+<div class="sec-keep">{{ sh('06', 'Apontamentos restritivos') }}
+<div class="kv"><div><small>Total de registros</small><b class="{{ 'risk' if d.restricoes_qtd else 'ok' }}">{{ d.restricoes_qtd }}</b></div><div><small>Valor consolidado</small><b class="{{ 'risk' if d.restricoes_qtd else 'ok' }}">{{ d.restricoes_valor | brl }}</b></div></div></div>
+<table><thead><tr><th>Origem</th><th>Situação</th><th class="r">Registros</th><th class="r">Valor</th></tr></thead><tbody>{% for b in d.biros %}<tr><td>{{ b.fonte }}</td><td><span class="dot {{ 'd-na' if b.qtd is none else ('d-risk' if b.qtd else 'd-ok') }}"></span>{{ b.status }}</td><td class="r">{{ '—' if b.qtd is none else b.qtd }}</td><td class="r">{{ '—' if b.valor is none else (b.valor | brl) }}</td></tr>{% endfor %}</tbody></table>
+{% call box('O que significa “nada consta”') %}<p>Ausência de apontamento quer dizer que nenhum credor comunicou dívida negativada até a data da consulta, e <b>não</b> que não exista dívida. Atraso recente ainda não comunicado, acordo em andamento e dívida fora do sistema de negativação não aparecem aqui. Por isso o bloco do SCR, a seguir, é leitura obrigatória junto com este.</p>{% endcall %}
+
+<div class="sec-keep">{{ sh('07', 'Endividamento bancário (SCR/Bacen)' ) }}
+<div class="kv k4">
+  <div><small>Data-base</small><b>{{ s.data_base }}</b></div>
+  <div><small>Início do relacionamento</small><b>{{ s.inicio_relacionamento }}</b></div>
+  <div><small>Instituições</small><b>{{ s.instituicoes }}</b></div>
+  <div><small>Operações</small><b>{{ s.operacoes }}</b></div>
+  <div><small>Limite na carteira</small><b>{{ s.limite | brl }}</b></div>
+  <div><small>Crédito a vencer</small><b>{{ s.a_vencer | brl }}</b></div>
+  <div><small>Crédito vencido</small><b class="{{ 'risk' if s.vencido }}">{{ s.vencido | brl }}</b></div>
+  <div><small>Prejuízo ao sistema financeiro</small><b class="{{ 'risk' if s.prejuizo else 'ok' }}">{{ s.prejuizo | brl }}</b></div>
+  <div><small>Operações com discordância</small><b>{{ s.discordancia }}</b></div>
+  <div><small>Operações sub judice</small><b>{{ s.sub_judice }}</b></div>
+  {% if cl.score_scr %}<div><small>Score SCR</small><b>{{ cl.score_scr }}</b></div>{% endif %}
+</div></div>
+<div class="stack"><div class="av" style="width:{{ s.pct_av }}%"></div><div class="vd" style="width:{{ s.pct_vd }}%"></div><div class="pj" style="width:{{ s.pct_pj }}%"></div></div>
+<div class="legend"><span><i style="background:var(--navy)"></i>A vencer {{ '%.0f' % s.pct_av }}%</span><span><i style="background:var(--risk)"></i>Vencido {{ '%.0f' % s.pct_vd }}%</span><span><i style="background:#5B1F14"></i>Prejuízo {{ '%.0f' % s.pct_pj }}%</span><span style="margin-left:auto">Carteira total {{ s.total | brl }}</span></div>
+{% call box('Por que este bloco costuma decidir a operação') %}<p>O SCR mostra o endividamento que já existe e está em dia, <b>invisível para os birôs</b>. É aqui que se descobre que um perfil sem nenhuma restrição já tem a renda comprometida com parcelas de outras instituições.</p><p>A ordem de gravidade é: <b>prejuízo</b> (o credor desistiu de receber), depois <b>crédito vencido</b> (atraso em curso), depois <b>crédito a vencer</b> (dívida saudável, mas que consome capacidade). Discordância e sub judice são valores contestados e merecem confirmação antes de entrar na conta.</p>{% endcall %}
+
+{{ sh('08', 'Operações de crédito, uma a uma') }}
+{% for o in d.operacoes_detalhe %}
+{%- if o.eh_limite -%}{%- set tg, tl = 'lm', 'Limite' -%}{%- elif o.vencido and o.a_vencer -%}{%- set tg, tl = 'pv', 'Parte vencida' -%}{%- elif o.vencido -%}{%- set tg, tl = 'vd', 'Vencido' -%}{%- else -%}{%- set tg, tl = 'av', 'A vencer' -%}{%- endif -%}
+<div class="op">
+  <div class="op-h"><div><div class="n">Operação {{ o.n }} · {{ o.grupo }}</div><h4>{{ o.modalidade }}</h4><div class="sub">Código Bacen {{ (o.cod_modalidade ~ "/") if o.cod_modalidade }}{{ o.cod_submodalidade }}</div><span class="tag {{ tg }}">{{ tl }}</span></div>
+  <div class="v">{{ o.total | brl }}{% if o.vencido %}<small>vencido {{ o.vencido | brl }}</small>{% endif %}</div></div>
+  <table><thead><tr>{% set tem_cod = o.faixas | selectattr("codigo") | list | length %}<th>Faixa de vencimento</th>{% if tem_cod %}<th>Código</th>{% endif %}<th class="r">Valor</th></tr></thead><tbody>{% for f in o.faixas %}<tr class="{{ 'vd' if f.tipo in ['vencido','prejuizo'] }}"><td>{{ {'a_vencer':'A vencer','vencido':'Vencido','prejuizo':'Prejuízo','limite':'Limite'}[f.tipo] }} {{ f.faixa }}</td>{% if tem_cod %}<td>{{ f.codigo }}</td>{% endif %}<td class="r">{{ f.valor | brl }}</td></tr>{% endfor %}</tbody></table>
+  {% if o.participacao %}<div class="foot"><span>Participação na carteira <b>{{ o.participacao }}</b></span>{% if o.faixa_mais_antiga %}<span>Atraso mais antigo <b>{{ o.faixa_mais_antiga }}</b></span>{% endif %}</div>{% endif %}
+</div>
+{% endfor %}
+{% call box('Como ler uma operação') %}<p>Cada bloco é uma linha de crédito contratada, com o código Bacen que identifica o tipo exato. Cheque especial e rotativo do cartão têm juro alto e sinalizam uso de crédito caro no dia a dia; financiamento de veículo ou imóvel indica dívida planejada, com garantia. <b>Mesmo valor, leitura oposta:</b> o tipo importa tanto quanto o montante.</p>{% endcall %}
+
+{% if d.contatos %}
+{{ sh('09', 'Contatos e endereços' ) }}
+<div class="kv"><div><small>Telefones</small><b>{{ d.contatos.telefones | join(' · ') }}</b></div><div><small>E-mails</small><b>{{ d.contatos.emails | join(' · ') }}</b></div></div>
+<p class="eyebrow" style="margin-top:3mm">Endereços conhecidos</p>
+<table><tbody>{% for e in d.contatos.enderecos %}<tr><td>{{ e }}</td></tr>{% endfor %}</tbody></table>
+{% call box('Para que serve este bloco') %}<p>São os dados de contato e endereço que o mercado tem sobre o titular. Servem para <b>confirmar identidade</b> e localizar o titular. Endereço ou telefone desatualizado não é indício de fraude por si só, mas divergência entre o cadastro do banco e estes dados merece correção.</p>{% endcall %}
+{% endif %}
+
+{{ sh('10', 'Participações societárias' ) }}
+<table><thead><tr><th>Razão social</th><th>CNPJ</th><th class="r">Participação</th></tr></thead><tbody>{% for p in d.participacoes %}<tr><td>{{ p.razao }}</td><td>{{ p.cnpj }}</td><td class="r">{{ p.participacao }}</td></tr>{% else %}<tr><td colspan="3">Nenhuma participação encontrada.</td></tr>{% endfor %}</tbody></table>
+{% call box('Por que sociedade entra numa análise de pessoa física') %}<p>Quem é sócio pode ter renda e obrigações que não aparecem no CPF: pró-labore e distribuição de lucros, mas também avais dados à empresa. Participação relevante em empresa endividada é risco indireto do titular, ainda que a ficha pessoal esteja limpa.</p>{% endcall %}
+
+<div class="sec-keep">{{ sh('11', 'Histórico de consultas ao crédito') }}
+<div class="kv"><div><small>Total de consultas</small><b>{{ d.consultas.total }}</b></div><div><small>Ocorrência mais recente</small><b>{{ d.consultas.mais_recente or '—' }}</b></div><div><small>Primeira consulta</small><b>{{ d.consultas.primeira or '—' }}</b></div></div></div>
+{% if d.consultas.detalhe %}<table><thead><tr><th>Data</th><th>Segmento de quem consultou</th></tr></thead><tbody>{% for x in d.consultas.detalhe %}<tr><td>{{ x.data }}</td><td>{{ x.segmento }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% call box('O que a frequência de consultas indica') %}<p>Toda vez que alguém avalia o crédito do titular, fica o registro. Volume alto num período curto sugere procura de crédito em vários lugares, o que, somado a comprometimento de renda elevado, costuma anteceder inadimplência. Consulta esparsa é comportamento normal de mercado.</p>{% endcall %}
+
+{{ sh('12', 'Glossário' ) }}
+<div class="gl">
+  <div><b>SCR · Sistema de Informações de Crédito</b><p>Base mantida pelo Banco Central com as operações que as instituições financeiras informam mensalmente. Não inclui dívidas fora do sistema financeiro.</p></div>
+  <div><b>Modalidade e submodalidade</b><p>Classificação padronizada da operação pelo Bacen: empréstimo, financiamento, cartão, cheque especial. O código identifica o tipo exato.</p></div>
+  <div><b>Crédito a vencer</b><p>Saldo com vencimento futuro. É dívida em dia, mas mostra quanto da renda já está comprometida.</p></div>
+  <div><b>Crédito vencido</b><p>Saldo com pagamento em atraso. Aparece no SCR mesmo sem negativação nos birôs.</p></div>
+  <div><b>Prejuízo ao sistema financeiro</b><p>Operação que a instituição baixou como perda. É o sinal mais severo do SCR.</p></div>
+  <div><b>Operação sub judice</b><p>Valor em discussão judicial: existe, mas está contestado e não deve ser lido como dívida certa.</p></div>
+  <div><b>Operação com discordância</b><p>O titular contestou formalmente o registro junto à instituição.</p></div>
+  <div><b>Protesto</b><p>Título levado a cartório por falta de pagamento. Tem efeito público e costuma preceder cobrança.</p></div>
+  <div><b>Score</b><p>Pontuação estatística que estima a probabilidade de inadimplência. É probabilidade, não certeza sobre a pessoa.</p></div>
+  <div><b>Renda presumida</b><p>Estimativa calculada a partir de indicadores cadastrais e de mercado. Não é renda declarada nem comprovada.</p></div>
+</div>
+
+{{ sh('13', 'Informações legais e LGPD') }}
+<div class="legal-txt">
+  <p>A decisão de aprovar ou não o crédito é de responsabilidade exclusiva do concedente. As informações deste dossiê subsidiam essa decisão e não devem ser usadas como única justificativa para ela.</p>
+  <p>Os dados foram obtidos em {{ d.consulta.data }} (protocolo {{ d.consulta.protocolo }}) por plataforma especializada de consulta, a partir de birôs de crédito e do SCR do Banco Central, com autorização do titular. Refletem o conteúdo disponível nas bases na data e hora da pesquisa. São confidenciais, de uso exclusivo do titular, e tratados nos termos da Lei 13.709/2018 (LGPD).</p>
+  <p>A Planner Consultoria e Corretora de Seguros Ltda (CNPJ 26.036.076/0001-60) organiza e explica estas informações. Não é instituição financeira, não concede nem intermedeia crédito, e nenhuma análise garante aprovação.</p>
+</div>
+<div class="endline">Planner Consultoria · Dossiê de Crédito · {{ c.documento }} · {{ d.consulta.data }}</div>
+{% endif %}</body></html>
