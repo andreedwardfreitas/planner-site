@@ -1,0 +1,381 @@
+{
+  "_aviso": "Dados 100% fictícios, só para testar o modelo.",
+  "tipo": "PF",
+  "cliente": {
+    "nome": "MARIA EXEMPLO DA SILVA",
+    "nome_exibicao": "Maria Exemplo da Silva",
+    "documento": "000.000.000-00",
+    "data_referencia": "01/01/1990",
+    "situacao_receita": "Regular",
+    "renda_presumida": 12000.0,
+    "classe_social": "B2",
+    "nome_mae": "JOANA EXEMPLO",
+    "perfil_premium": "Não"
+  },
+  "consulta": {
+    "data": "01/01/2027",
+    "protocolo": "EXEMPLO-0000",
+    "fontes": "Birôs de crédito (Serasa, SPC, Boa Vista) e SCR do Banco Central"
+  },
+  "classificacao": {
+    "classe": "B",
+    "score": 702,
+    "score_scr": "520 (regular)",
+    "sintese": "Operável com atenção",
+    "veredito": "Atenção",
+    "parecer": "Há atraso registrado no SCR, o que representa risco. A renda estimada comporta as obrigações atuais com pouca folga.",
+    "limitadores": [
+      "Crédito vencido e não pago no SCR"
+    ],
+    "sintese_decisao": "Aprovação com ressalvas",
+    "sintese_decisao_obs": "Exige mitigação / ajustes",
+    "endividamento_obs": "R$ 3.200,00 vencido no SCR,",
+    "saude_obs": "Comprometimento moderado da renda estimada."
+  },
+  "capacidade": {
+    "capacidade_mensal": 2900.0,
+    "comprometimento": "32,0%",
+    "limite_sugerido": 36000.0,
+    "limite_rotulo": "Limite sugerido após regularizar as pendências"
+  },
+  "comportamento": {
+    "risco_geral": "Médio",
+    "busca_credito_12m": "Baixa",
+    "endividamento": "Moderado",
+    "saude_financeira": "Regular",
+    "pontualidade": "88,40",
+    "indice_risco": "0,7",
+    "indice_financeiro": "0,6",
+    "recuperacao_judicial": "Não consta"
+  },
+  "consultas": {
+    "ano": 2026,
+    "por_mes": [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "detalhe": [
+      {
+        "data": "10/09/2026",
+        "segmento": "Bancos"
+      },
+      {
+        "data": "15/03/2026",
+        "segmento": "Varejo"
+      }
+    ],
+    "mais_recente": "10/09/2026",
+    "primeira": "15/03/2026"
+  },
+  "biros": [
+    {
+      "fonte": "Serasa",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    },
+    {
+      "fonte": "SPC",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    },
+    {
+      "fonte": "Boa Vista",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    },
+    {
+      "fonte": "Protestos em cartório",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    },
+    {
+      "fonte": "Cheques sem fundo",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    },
+    {
+      "fonte": "Recuperação judicial ou falência",
+      "status": "Nada consta",
+      "qtd": 0,
+      "valor": 0
+    }
+  ],
+  "scr": {
+    "data_base": "11/2026",
+    "inicio_relacionamento": "01/03/2012",
+    "instituicoes": 3,
+    "operacoes": 6,
+    "a_vencer": 48000.0,
+    "vencido": 3200.0,
+    "prejuizo": 0.0,
+    "limite": 3000.0,
+    "discordancia": 0,
+    "sub_judice": 0
+  },
+  "operacoes": [
+    {
+      "modalidade": "Aquisição de bens - veículos automotores",
+      "codigo": "01",
+      "total": 33100.0,
+      "vencido": 1100.0,
+      "faixa_mais_antiga": "de 15 a 30 dias"
+    },
+    {
+      "modalidade": "Crédito pessoal - sem consignação em folha de pagamento",
+      "codigo": "03",
+      "total": 8300.0,
+      "vencido": 1300.0,
+      "faixa_mais_antiga": "de 31 a 60 dias"
+    },
+    {
+      "modalidade": "Cheque especial",
+      "codigo": "13",
+      "total": 800.0,
+      "vencido": 800.0,
+      "faixa_mais_antiga": "de 15 a 30 dias"
+    },
+    {
+      "modalidade": "Cartão de crédito - compra à vista e parcelado lojista",
+      "codigo": "04",
+      "total": 9000.0,
+      "vencido": 0,
+      "faixa_mais_antiga": null
+    }
+  ],
+  "operacoes_detalhe": [
+    {
+      "n": 1,
+      "grupo": "Financiamentos",
+      "modalidade": "Aquisição de bens - veículos automotores",
+      "cod_modalidade": null,
+      "cod_submodalidade": "01",
+      "total": 33100.0,
+      "faixas": [
+        {
+          "tipo": "a_vencer",
+          "faixa": "até 30 dias",
+          "valor": 1100.0,
+          "codigo": null
+        },
+        {
+          "tipo": "a_vencer",
+          "faixa": "de 31 a 360 dias",
+          "valor": 12100.0,
+          "codigo": null
+        },
+        {
+          "tipo": "a_vencer",
+          "faixa": "de 361 a 1080 dias",
+          "valor": 18800.0,
+          "codigo": null
+        },
+        {
+          "tipo": "vencido",
+          "faixa": "de 15 a 30 dias",
+          "valor": 1100.0,
+          "codigo": null
+        }
+      ],
+      "participacao": "60,00%",
+      "a_vencer": 32000.0,
+      "vencido": 1100.0,
+      "prejuizo": 0.0,
+      "faixa_mais_antiga": "de 15 a 30 dias",
+      "eh_limite": false
+    },
+    {
+      "n": 2,
+      "grupo": "Empréstimos",
+      "modalidade": "Crédito pessoal - sem consignação em folha de pagamento",
+      "cod_modalidade": null,
+      "cod_submodalidade": "03",
+      "total": 8300.0,
+      "faixas": [
+        {
+          "tipo": "a_vencer",
+          "faixa": "até 30 dias",
+          "valor": 600.0,
+          "codigo": null
+        },
+        {
+          "tipo": "a_vencer",
+          "faixa": "de 31 a 360 dias",
+          "valor": 6400.0,
+          "codigo": null
+        },
+        {
+          "tipo": "vencido",
+          "faixa": "de 31 a 60 dias",
+          "valor": 1300.0,
+          "codigo": null
+        }
+      ],
+      "participacao": "16,00%",
+      "a_vencer": 7000.0,
+      "vencido": 1300.0,
+      "prejuizo": 0.0,
+      "faixa_mais_antiga": "de 31 a 60 dias",
+      "eh_limite": false
+    },
+    {
+      "n": 3,
+      "grupo": "Empréstimos",
+      "modalidade": "Cheque especial",
+      "cod_modalidade": null,
+      "cod_submodalidade": "13",
+      "total": 800.0,
+      "faixas": [
+        {
+          "tipo": "vencido",
+          "faixa": "de 15 a 30 dias",
+          "valor": 800.0,
+          "codigo": null
+        }
+      ],
+      "participacao": "1,50%",
+      "a_vencer": 0,
+      "vencido": 800.0,
+      "prejuizo": 0.0,
+      "faixa_mais_antiga": "de 15 a 30 dias",
+      "eh_limite": false
+    },
+    {
+      "n": 4,
+      "grupo": "Outros créditos",
+      "modalidade": "Cartão de crédito - compra à vista e parcelado lojista",
+      "cod_modalidade": null,
+      "cod_submodalidade": "04",
+      "total": 9000.0,
+      "faixas": [
+        {
+          "tipo": "a_vencer",
+          "faixa": "até 30 dias",
+          "valor": 2300.0,
+          "codigo": null
+        },
+        {
+          "tipo": "a_vencer",
+          "faixa": "de 31 a 360 dias",
+          "valor": 6700.0,
+          "codigo": null
+        }
+      ],
+      "participacao": "17,30%",
+      "a_vencer": 9000.0,
+      "vencido": 0,
+      "prejuizo": 0.0,
+      "faixa_mais_antiga": null,
+      "eh_limite": false
+    },
+    {
+      "n": 5,
+      "grupo": "Limite",
+      "modalidade": "Cartão de crédito",
+      "cod_modalidade": null,
+      "cod_submodalidade": "04",
+      "total": 3000.0,
+      "faixas": [
+        {
+          "tipo": "limite",
+          "faixa": "com vencimento até 360 dias",
+          "valor": 3000.0,
+          "codigo": null
+        }
+      ],
+      "participacao": null,
+      "a_vencer": 0,
+      "vencido": 0,
+      "prejuizo": 0,
+      "faixa_mais_antiga": null,
+      "eh_limite": true
+    }
+  ],
+  "participacoes": [
+    {
+      "razao": "Empresa Exemplo Ltda",
+      "cnpj": "00.000.000/0001-00",
+      "participacao": "100%"
+    }
+  ],
+  "contatos": {
+    "telefones": [
+      "92900000000"
+    ],
+    "emails": [
+      "cliente@exemplo.com"
+    ],
+    "enderecos": [
+      "Rua Exemplo, 100 · Centro · Manaus/AM · CEP 69000-000"
+    ]
+  },
+  "leitura": {
+    "sintese": "O nome está limpo nos birôs, mas o SCR registra atraso em três linhas de crédito. É esse atraso que segura a classificação em B.",
+    "contra": [
+      {
+        "titulo": "Atraso no SCR",
+        "texto": "Três modalidades com parcelas vencidas, a mais antiga entre 31 e 60 dias."
+      },
+      {
+        "titulo": "Cheque especial em atraso",
+        "texto": "Linha de juro alto, vencida há até 30 dias."
+      },
+      {
+        "titulo": "Comprometimento de 32%",
+        "texto": "Acima da faixa de folga usada pelos bancos."
+      }
+    ],
+    "favor": [
+      {
+        "titulo": "Nada consta nos birôs",
+        "texto": "Sem negativação, protesto ou cheque sem fundo."
+      },
+      {
+        "titulo": "Sem prejuízo",
+        "texto": "Nenhuma operação baixada como perda."
+      }
+    ],
+    "plano": [
+      {
+        "acao": "Regularizar o crédito pessoal",
+        "detalhe": "Atraso mais antigo da carteira.",
+        "prazo": "Imediato"
+      },
+      {
+        "acao": "Quitar o cheque especial",
+        "detalhe": "Juro mais alto entre as linhas em uso.",
+        "prazo": "Até 30 dias"
+      },
+      {
+        "acao": "Pôr em dia a parcela do veículo",
+        "detalhe": "Financiamento com garantia.",
+        "prazo": "Até 30 dias"
+      },
+      {
+        "acao": "Nova consulta",
+        "detalhe": "Depois que o SCR refletir a regularização.",
+        "prazo": "Em 60 a 90 dias"
+      }
+    ],
+    "proximo_passo": "Na reunião de entrega, o especialista percorre o plano com você e define a ordem de negociação."
+  },
+  "planner": {
+    "especialista": "André Freitas",
+    "whatsapp": "(92) 99523-8398",
+    "instagram": "@planner.consultoria__"
+  }
+}

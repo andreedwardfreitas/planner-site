@@ -1,0 +1,195 @@
+{%- set c = d.cliente -%}{%- set cl = d.classificacao -%}{%- set s = d.scr -%}
+{%- set alvo = 'seu CPF' if d.tipo == 'PF' else 'sua empresa' -%}{%- set alvo_de = 'do seu CPF' if d.tipo == 'PF' else 'da sua empresa' -%}{%- set wa = 'https://wa.me/' ~ d.planner.whatsapp_link ~ '?text=Ol%C3%A1!%20Recebi%20meu%20diagn%C3%B3stico%20de%20cr%C3%A9dito%20da%20Planner.' -%}
+{%- set TOTAL = 7 -%}
+{%- macro head(titulo) -%}<div class="ph"><img src="assets/logo-horizontal.png" alt="Planner Consultoria"><span>{{ titulo }}</span></div>{%- endmacro -%}
+{%- macro foot(n) -%}<div class="pf"><span>Planner Consultoria · Diagnóstico de Crédito · {{ c.nome_exibicao }}</span><span>Consulta de {{ d.consulta.data }} · {{ n }}/{{ TOTAL }}</span></div>{%- endmacro -%}
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Diagnóstico de Crédito · {{ c.nome_exibicao }}</title><link rel="stylesheet" href="style.css"></head><body>
+
+<!-- 1. CAPA -->
+<section class="page cover">
+  <img class="logo" src="assets/logo-horizontal.png" alt="Planner Consultoria">
+  <div class="rule"></div>
+  <p class="eyebrow">Diagnóstico de crédito · {{ 'Pessoa física' if d.tipo == 'PF' else 'Pessoa jurídica' }}</p>
+  <h1>Como os bancos enxergam <em>{{ alvo }}</em> hoje.</h1>
+  <div class="who">
+    <div class="name">{{ c.nome_exibicao }}</div>
+    <div class="meta">{{ 'CPF' if d.tipo == 'PF' else 'CNPJ' }} {{ c.doc_mascarado }} · Consulta realizada em {{ d.consulta.data }}</div>
+  </div>
+  <div class="foot">
+    <div>Preparado por <b>{{ d.planner.especialista }}</b><br>Planner Consultoria · Manaus, AM</div>
+    <div style="text-align:right">Documento confidencial, de uso exclusivo do titular<br>Protocolo da consulta {{ d.consulta.protocolo }}</div>
+  </div>
+</section>
+
+<!-- 2. SÍNTESE -->
+<section class="page">
+  {{ head('Síntese') }}
+  <p class="eyebrow">01 · Síntese</p>
+  <h2>O retrato {{ alvo_de }} <em>na data da consulta.</em></h2>
+  <div class="hero-grid">
+    <div class="badge"><small>Classificação</small><strong>{{ cl.classe }}</strong><span>Score {{ cl.score }} de 1000</span></div>
+    <div>
+      <span class="verdict v-{{ cl.nivel }}">{{ cl.veredito or cl.sintese }}</span>
+      <div class="scale">{% for e in ESCALA %}<div class="{{ 'on' if loop.index0 == cl.idx }}" style="background:{{ CORES[e] }}">{{ e }}</div>{% endfor %}</div>
+      <div class="scale-legend"><span>Menor risco</span><span>Maior risco</span></div>
+      <p class="parecer">{{ cl.parecer }}</p>
+      {% if cl.limitadores %}<div class="chips">{% for l in cl.limitadores %}<span class="chip">{{ l }}</span>{% endfor %}</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><b>Os números que o banco usa</b><i>Estimativas de mercado</i></div>
+    <div class="metrics">
+      <div class="metric"><small>{{ 'Renda presumida' if d.tipo == 'PF' else 'Faturamento presumido' }}</small><strong>{{ c.renda_presumida | brl }}</strong><span>por mês, estimada</span></div>
+      <div class="metric"><small>Capacidade mensal de pagamento</small><strong>{{ d.capacidade.capacidade_mensal | brl }}</strong><span>parcela que cabe hoje</span></div>
+      <div class="metric"><small>Comprometimento de renda</small><strong>{{ d.capacidade.comprometimento }}</strong><span>já tomado por dívidas</span></div>
+      <div class="metric"><small>{{ d.capacidade.limite_rotulo }}</small><strong>{{ d.capacidade.limite_sugerido | brl }}</strong><span>régua da plataforma</span></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><b>Os 4 pilares da decisão de crédito</b><i>Birôs → SCR → Classificação → Veredito</i></div>
+    <div class="pillars">{% for p in d.pilares %}<div class="pillar"><div class="n">{{ p.n }}</div><h4>{{ p.t }}</h4><div class="st st-{{ p.lv }}">{{ p.st }}</div><p>{{ p.p }}</p></div>{% endfor %}</div>
+  </div>
+  <p class="small" style="margin-top:5mm">Classificação calculada pela plataforma de consulta a partir do SCR do Banco Central, dos birôs de crédito e do histórico de pagamento. É uma estimativa técnica de mercado, não a nota interna de um banco específico. A decisão de crédito é sempre da instituição financeira.</p>
+  {{ foot(2) }}
+</section>
+
+<!-- 3. LEITURA DA PLANNER -->
+<section class="page">
+  {{ head('Leitura da Planner') }}
+  <p class="eyebrow">02 · Leitura da Planner</p>
+  <h2>O que está por trás <em>da sua nota.</em></h2>
+  <p class="lead">{{ d.leitura.sintese }}</p>
+  <div class="cols sec">
+    <div>
+      <p class="col-title st-risk">O que pesa contra</p>
+      {% for p in d.leitura.contra %}<div class="point"><h3>{{ p.titulo }}</h3><p>{{ p.texto }}</p></div>{% endfor %}
+    </div>
+    <div>
+      <p class="col-title st-ok">O que joga a favor</p>
+      {% for p in d.leitura.favor %}<div class="point fav"><h3>{{ p.titulo }}</h3><p>{{ p.texto }}</p></div>{% endfor %}
+    </div>
+  </div>
+  {{ foot(3) }}
+</section>
+
+<!-- 4. PLANO -->
+<section class="page">
+  {{ head('Plano de prioridades') }}
+  <p class="eyebrow">03 · Plano de prioridades</p>
+  <h2>O que fazer primeiro, <em>e em que ordem.</em></h2>
+  <ol class="plan">{% for p in d.leitura.plano %}<li><span class="num">{{ '%02d' % loop.index }}</span><div><h3>{{ p.acao }}</h3><p>{{ p.detalhe }}</p></div><span class="when">{{ p.prazo }}</span></li>{% endfor %}</ol>
+  <div class="next">
+    <div><p class="eyebrow">Próximo passo</p><p>{{ d.leitura.proximo_passo }}</p></div>
+    <a class="contact" href="{{ wa }}">Fale com a Planner<b>{{ d.planner.whatsapp }}</b>WhatsApp</a>
+  </div>
+  <p class="small" style="margin-top:5mm">O plano organiza prioridades a partir dos dados da consulta. Ele não garante aprovação de crédito: cada instituição aplica a própria política.</p>
+  {{ foot(4) }}
+</section>
+
+<!-- 5. BIRÔS E COMPORTAMENTO -->
+<section class="page">
+  {{ head('Birôs e comportamento') }}
+  <p class="eyebrow">04 · Birôs, cartórios e comportamento</p>
+  <h2>Restrições <em>e hábitos de crédito.</em></h2>
+  <div class="sec-title"><b>Apontamentos restritivos</b><i>{{ d.restricoes_qtd }} registro(s) · {{ d.restricoes_valor | brl }}</i></div>
+  <table>
+    <thead><tr><th>Origem</th><th>Situação</th><th class="r">Registros</th><th class="r">Valor</th></tr></thead>
+    <tbody>{% for b in d.biros %}<tr><td>{{ b.fonte }}</td><td><span class="dot {{ 'd-na' if b.qtd is none else ('d-risk' if b.qtd else 'd-ok') }}"></span>{{ b.status }}</td><td class="r">{{ '—' if b.qtd is none else b.qtd }}</td><td class="r">{{ '—' if b.valor is none else (b.valor | brl) }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <p class="small" style="margin-top:2mm">“Nada consta” quer dizer que nenhum credor comunicou dívida negativada até a data da consulta. Atraso em banco aparece no SCR, na página seguinte, mesmo sem negativação.</p>
+
+  <div class="sec">
+    <div class="sec-title"><b>Comportamento de crédito</b><i>Indicadores da plataforma</i></div>
+    {%- set cm = d.comportamento -%}
+    <div class="ind">
+      <div><small>Risco geral</small><b>{{ cm.risco_geral }}</b></div>
+      <div><small>Procura por crédito em 12 meses</small><b>{{ cm.busca_credito_12m }}</b></div>
+      <div><small>Endividamento</small><b>{{ cm.endividamento }}</b></div>
+      <div><small>Saúde financeira</small><b>{{ cm.saude_financeira }}</b></div>
+      <div><small>Pontualidade de pagamento</small><b>{{ cm.pontualidade }}</b></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title"><b>Consultas ao {{ 'CPF' if d.tipo == 'PF' else 'CNPJ' }} em {{ d.consultas.ano }}</b><i>{{ d.consultas.total }} no ano</i></div>
+    <div class="cal">{% for m in ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'] %}{% set v = d.consultas.por_mes[loop.index0] %}<div>{{ m }}<span class="{{ 'c3' if v >= 3 else ('c' ~ v if v else '') }}">{{ v if v else '·' }}</span></div>{% endfor %}</div>
+    {% if d.consultas.detalhe %}<table style="margin-top:4mm"><thead><tr><th>Data</th><th>Quem consultou (segmento)</th></tr></thead><tbody>{% for x in d.consultas.detalhe %}<tr><td>{{ x.data }}</td><td>{{ x.segmento }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+    <p class="small" style="margin-top:2mm">Consultas seguidas em pouco tempo indicam procura ativa por crédito e costumam pesar contra o perfil.</p>
+  </div>
+  {{ foot(5) }}
+</section>
+
+<!-- 6. SCR -->
+<section class="page">
+  {{ head('SCR do Banco Central') }}
+  <p class="eyebrow">05 · Endividamento bancário (SCR)</p>
+  <h2>O que os bancos <em>veem uns dos outros.</em></h2>
+  <div class="scr-sum">
+    <div class="metric"><small>Crédito a vencer</small><strong>{{ s.a_vencer | brl }}</strong><span>dívida em dia</span></div>
+    <div class="metric"><small>Crédito vencido</small><strong class="st-risk">{{ s.vencido | brl }}</strong><span>atraso em curso</span></div>
+    <div class="metric"><small>Prejuízo</small><strong class="{{ 'st-risk' if s.prejuizo else '' }}">{{ s.prejuizo | brl }}</strong><span>baixado como perda</span></div>
+    <div class="metric"><small>Limites contratados</small><strong>{{ s.limite | brl }}</strong><span>não é dívida</span></div>
+  </div>
+  <div class="stack"><div class="av" style="width:{{ s.pct_av }}%"></div><div class="vd" style="width:{{ s.pct_vd }}%"></div><div class="pj" style="width:{{ s.pct_pj }}%"></div></div>
+  <div class="legend"><span><i style="background:var(--navy)"></i>A vencer {{ '%.0f' % s.pct_av }}%</span><span><i style="background:var(--risk)"></i>Vencido {{ '%.0f' % s.pct_vd }}%</span><span><i style="background:#5B1F14"></i>Prejuízo {{ '%.0f' % s.pct_pj }}%</span><span style="margin-left:auto">Carteira total {{ s.total | brl }}</span></div>
+
+  <div class="sec">
+    <div class="sec-title"><b>Operações, uma a uma</b><i>Ordenadas pelo valor vencido</i></div>
+    <table>
+      <thead><tr><th>Modalidade</th><th class="r">Saldo total</th><th class="r">Vencido</th><th>Parte vencida</th><th>Atraso mais antigo</th></tr></thead>
+      <tbody>{% for o in d.operacoes | sort(attribute='vencido', reverse=True) %}<tr><td>{{ o.modalidade }}</td><td class="r">{{ o.total | brl }}</td><td class="r {{ 'st-risk' if o.vencido }}">{{ o.vencido | brl }}</td><td><div class="bar"><b style="width:{{ o.pct_vencido }}%"></b></div></td><td>{{ o.faixa_mais_antiga or 'Em dia' }}</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+  <div class="sec facts">
+    <div><span>Data-base do SCR</span><b>{{ s.data_base }}</b></div>
+    <div><span>Relacionamento desde</span><b>{{ s.inicio_relacionamento }}</b></div>
+    <div><span>Instituições</span><b>{{ s.instituicoes }}</b></div>
+    <div><span>Operações</span><b>{{ s.operacoes }}</b></div>
+    <div><span>Em discordância</span><b>{{ s.discordancia }}</b></div>
+    <div><span>Sub judice</span><b>{{ s.sub_judice }}</b></div>
+  </div>
+  <p class="small" style="margin-top:3mm">Ordem de gravidade no SCR: prejuízo (o credor desistiu de receber), depois vencido (atraso em curso), depois a vencer (dívida em dia, que consome capacidade). Rotativo e cheque especial são as linhas mais caras do mercado.</p>
+  {{ foot(6) }}
+</section>
+
+<!-- 7. CADASTRO, ESCALA E AVISOS -->
+<section class="page">
+  {{ head('Cadastro e referências') }}
+  <p class="eyebrow">06 · Cadastro e referências</p>
+  <h2>Dados cadastrais <em>e como ler este diagnóstico.</em></h2>
+  <div class="facts">
+    <div><span>Titular</span><b>{{ c.nome_exibicao }}</b></div>
+    <div><span>{{ 'CPF' if d.tipo == 'PF' else 'CNPJ' }}</span><b>{{ c.documento }}</b></div>
+    <div><span>Situação na Receita</span><b>{{ c.situacao_receita }}</b></div>
+    <div><span>{{ 'Nascimento' if d.tipo == 'PF' else 'Fundação' }}</span><b>{{ c.data_referencia }}</b></div>
+    {% if c.classe_social %}<div><span>Classe social estimada</span><b>{{ c.classe_social }}</b></div>{% endif %}
+    {% if cl.score_scr %}<div><span>Score SCR</span><b>{{ cl.score_scr }}</b></div>{% endif %}
+  </div>
+  {% if d.participacoes %}
+  <div class="sec">
+    <div class="sec-title"><b>Participações societárias</b><i>Risco cruzado entre CPF e CNPJ</i></div>
+    <table><thead><tr><th>Empresa</th><th>CNPJ</th><th class="r">Participação</th></tr></thead><tbody>{% for p in d.participacoes %}<tr><td>{{ p.razao }}</td><td>{{ p.cnpj }}</td><td class="r">{{ p.participacao }}</td></tr>{% endfor %}</tbody></table>
+  </div>
+  {% endif %}
+  <div class="sec">
+    <div class="sec-title"><b>Escala de classificação</b><i>AAA a C-</i></div>
+    <table><tbody>
+      <tr><td><span class="dot" style="background:{{ CORES['AAA'] }}"></span><b>AAA a A</b></td><td>Risco mínimo a baixo. Histórico sem restrições e capacidade de pagamento folgada.</td></tr>
+      <tr><td><span class="dot" style="background:{{ CORES['BBB'] }}"></span><b>BBB e BB</b></td><td>Risco moderado. Aceitável com atenção ao comprometimento de renda, ou com mitigação.</td></tr>
+      <tr><td><span class="dot" style="background:{{ CORES['C'] }}"></span><b>B a C-</b></td><td>Risco elevado a muito alto. Operação com garantia forte ou não recomendada.</td></tr>
+    </tbody></table>
+  </div>
+  <div class="sec gloss">
+    <p><b>SCR</b>Base do Banco Central com as operações de crédito que os bancos informam todo mês. Mostra dívida em dia e em atraso.</p>
+    <p><b>Renda presumida e capacidade</b>Estimativas estatísticas do mercado, não renda declarada. Servem de referência para dimensionar parcela e limite.</p>
+    <p><b>Score</b>Probabilidade estimada de inadimplência. Score alto com atraso no SCR continua sendo risco para o banco.</p>
+    <p><b>Prejuízo</b>Operação que a instituição baixou como perda. É o registro mais grave do SCR.</p>
+  </div>
+  <div class="sec legal">
+    Fontes: {{ d.consulta.fontes }}, consultados por plataforma especializada em {{ d.consulta.data }} (protocolo {{ d.consulta.protocolo }}), com autorização do titular. As informações refletem as bases na data da consulta e são de uso exclusivo do titular, nos termos da Lei 13.709/2018 (LGPD). Este diagnóstico não garante aprovação de crédito: a decisão é sempre da instituição financeira. A Planner Consultoria e Corretora de Seguros Ltda (CNPJ 26.036.076/0001-60) não é instituição financeira e não concede nem intermedeia crédito.
+  </div>
+  {{ foot(7) }}
+</section>
+</body></html>

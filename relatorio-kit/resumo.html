@@ -1,0 +1,44 @@
+{%- set c = d.cliente -%}{%- set cl = d.classificacao -%}{%- set s = d.scr -%}
+{%- set alvo = 'seu CPF' if d.tipo == 'PF' else 'sua empresa' -%}{%- set wa = 'https://wa.me/' ~ d.planner.whatsapp_link ~ '?text=Ol%C3%A1!%20Recebi%20o%20resumo%20do%20meu%20diagn%C3%B3stico%20e%20quero%20agendar%20a%20entrega.' -%}
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Resumo de Crédito · {{ c.nome_exibicao }}</title><link rel="stylesheet" href="style.css"></head><body>
+<section class="page sum">
+  <div class="top">
+    <div class="row"><img src="assets/logo-horizontal.png" alt="Planner Consultoria"><div class="date">Resumo da consulta<br>{{ d.consulta.data }}</div></div>
+    <h1>Como os bancos enxergam <em>{{ alvo }}</em> hoje.</h1>
+    <div class="who">{{ c.nome_exibicao }} · {{ 'CPF' if d.tipo == 'PF' else 'CNPJ' }} {{ c.doc_mascarado }}</div>
+  </div>
+  <div class="body">
+    <div class="head">
+      <div class="badge"><small>Classificação</small><strong>{{ cl.classe }}</strong><span>Score {{ cl.score }}</span></div>
+      <div>
+        <span class="verdict v-{{ cl.nivel }}">{{ cl.veredito or cl.sintese }}</span>
+        <div class="scale">{% for e in ESCALA %}<div class="{{ 'on' if loop.index0 == cl.idx }}" style="background:{{ CORES[e] }}">{{ e }}</div>{% endfor %}</div>
+        <div class="scale-legend"><span>Menor risco</span><span>Maior risco</span></div>
+        <p class="parecer">{{ d.leitura.sintese }}</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><b>Os 4 pilares</b><i>Birôs → SCR → Classificação → Veredito</i></div>
+      <div class="pillars">{% for p in d.pilares %}<div class="pillar"><div class="n">{{ p.n }}</div><h4>{{ p.t }}</h4><div class="st st-{{ p.lv }}">{{ p.st }}</div></div>{% endfor %}</div>
+    </div>
+
+    <div class="sec metrics" style="grid-template-columns:repeat(3,1fr)">
+      <div class="metric"><small>Capacidade mensal de pagamento</small><strong>{{ d.capacidade.capacidade_mensal | brl }}</strong></div>
+      <div class="metric"><small>Comprometimento de renda</small><strong>{{ d.capacidade.comprometimento }}</strong></div>
+      <div class="metric"><small>{{ d.capacidade.limite_rotulo }}</small><strong>{{ d.capacidade.limite_sugerido | brl }}</strong></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><b>O que mais pesa contra você</b><i>Detalhado no diagnóstico completo</i></div>
+      <ol class="toplist">{% for p in d.leitura.contra[:3] %}<li><span class="n">{{ loop.index }}</span><div><b>{{ p.titulo }}</b></div></li>{% endfor %}</ol>
+    </div>
+
+    <div class="cta">
+      <div><h3>Agende a entrega do seu diagnóstico completo</h3><p>Em uma reunião com {{ d.planner.especialista }}, você recebe a leitura de cada ponto e o plano de prioridades, com a ordem do que resolver primeiro.</p></div>
+      <a class="btn" href="{{ wa }}">Agendar pelo WhatsApp<small>{{ d.planner.whatsapp }}</small></a>
+    </div>
+  </div>
+  <div class="disc">Planner Consultoria · CNPJ 26.036.076/0001-60. Classificação estimada a partir do SCR do Banco Central e dos birôs de crédito na data da consulta; não é a nota interna de um banco específico. Este resumo não garante aprovação de crédito: a decisão é sempre da instituição financeira.</div>
+</section>
+</body></html>
